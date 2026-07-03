@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% include 'navbar.html' %}
+{% block title %}
+    Register
+{% endblock %}
+{% block content %}
+    <h1 class="display-1">Register</h1>
+    <form action="" class="form">
+        <div class="form-group">
+            <label for="fullname" class="form-label">Fullname</label>
+            <input type="text" name="fullname" required class="form-control">
+        </div><br>
+        <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" name="email" required class="form-control">
+        </div><br>
+        <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" required autocomplete="new-password" class="form-control">
+        </div><br>
+        <div class="form-group">
+            <label for="confirm password" class="form-label">Confirm Password</label>
+            <input type="password" name="confirm password" required autocomplete="new-password" class="form-control">
+        </div><br>
+        <div class="form-group">
+            <label for="role" class="form-label">Select Role</label>
+            <select id="role" name="role">
+                <option value="Select role">Select Role</option>
+                <option value="Admin">Admin</option>
+                <option value="Staff">Staff</option>
+                <option value="User">User</option>
+            </select>
+        </div><br>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Register</button>
+        </div>
+    </form><br>
+    <h4>Already have an account? </h4>
+    <a href="{{ url_for('login') }}">Login here</a>
+
+{% endblock %}

@@ -1,16 +1,18 @@
- Welcome to {{var1}} Dashboard!
- <!DOCTYPE html>
- <html lang="en">
- <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TREKKING</title>
- </head>
- <body>
-    <h1>TREKKING MANAGEMENT APP</h1>
-    <h2>LEGEND / ROLES</h2>
-    <h3>ADMIN</h3>
-    <h3>STAFF</h3>
-    <h3>USER</h3>
- </body>
- </html>
+{% extends 'layout.html' %}
+{% block content %}
+   Welcome to {{var1}} Dashboard!
+
+   <h1>TREKKING MANAGEMENT APP</h1>
+   <h2>LEGEND / ROLES</h2><br>
+   <h3>ADMIN</h3>
+   <h3>STAFF</h3>
+   <h3>USER</h3>
+   <br>
+
+   <h4>Already have an account? </h4>
+   <a href="{{ url_for('login') }}">Login here</a> <br><br>
+   <h4>Don't have an account?</h4>
+   <a href="{{ url_for('register') }}">Register here</a>
+{% endblock %}
+
+

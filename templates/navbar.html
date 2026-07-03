@@ -1,0 +1,90 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Trekking</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{{ url_for('login') }}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{{ url_for('register') }}">Register</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Admin</a></li>
+            <li><a class="dropdown-item" href="#">Staff Member</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">User</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+
+
+
+
+
+
+<!--<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
+     style="width:250px; min-height:100vh;">
+
+    <h3 class="text-center mb-4">
+        Trek Admin
+    </h3>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('login')}}" class="nav-link text-white">
+                Dashboard
+            </a>
+        </li>
+        <li class="mb-2">
+            <a href="#" class="nav-link text-white">
+                Manage Treks
+            </a>
+        </li>
+        <li class="mb-2">
+            <a href="#" class="nav-link text-white">
+                Trek Staff
+            </a>
+        </li>
+        <li class="mb-2">
+            <a href="#" class="nav-link text-white">
+                Users
+            </a>
+        </li>
+        <li class="mb-2">
+            <a href="#" class="nav-link text-white">
+                Bookings
+            </a>
+        </li>
+        <li class="mb-2">
+            <a href="#" class="nav-link text-white">
+                Reports
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <a href="#" class="btn btn-danger">
+        Logout
+    </a>
+
+</div>
+-->

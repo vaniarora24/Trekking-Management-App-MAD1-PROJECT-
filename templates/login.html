@@ -1,25 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-<body>
-    <h1>Login</h1>
+{% extends 'layout.html' %}
+{% include 'navbar.html' %}
+{% block title %}
+    Login
+{% endblock %}
+{% block content %}
+    <h1 class="display-1">Login</h1>
     <form action="" class="my-form">
         <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" name="username">
-        </div>
+            <label for="email" class="form-label">Email</label>
+            <input type="email" name="email" required class="form-control">
+        </div><br>
         <div class="form-group">
-            <label for="password">Password</label>
-            <input type="text" name="password">
-        </div>
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" required class="form-control">
+        </div><br>
         <div class="form-group">
-            <button type="submit">Login</button>
-        </div>
-    </form>
+            <label for="remember me" class="form-label">Remember me?</label>
+            <input type="checkbox" name="remember me" required>
+        </div><br>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div><br>
+        
+    </form><br>
+    <h4>Don't have an account?</h4>
+    <a href="{{ url_for('register') }}">Register here</a>
     
-</body>
-</html>
+{% endblock %}
