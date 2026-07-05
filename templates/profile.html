@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-1">
+        Dear 
+        <span class="text-muted">@{{user.name}}!</span>
+    </h1>
+    <div class="profile-pic">
+        <img src="https://api.dicebear.com/10.x/lorelei/svg?seed={{user.name}}" width="50">
+    </div>
+    <a href="{{url_for('logout')}}" class="btn btn-outline-danger">Logout</a>
+
+    <form action="" method="post" class="form">
+        <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <input type="email" name="username" id="username" value="{{user.username}}" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" name="email" id="email" value="{{ user.email }}" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="cpassword" class="form-label">Current Password</label>
+            <input type="password" name="cpassword" id="cpassword" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="password" class="form-label">New Password</label>
+            <input type="password" name="password" id="password" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" name="name" id="name" value="{{user.name}}" class="form-control" required>
+        </div><br>
+        <div class="form-group">
+            <input type="submit" value="Update" class="btn btn-success">
+        </div>
+    </form>
+
+{% endblock %}
+
+
+

@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
     <h1 class="display-1">Register</h1>
-    <form action="" class="form">
+    <form method="POST" class="form">
         <div class="form-group">
             <label for="fullname" class="form-label">Fullname</label>
             <input type="text" name="fullname" required class="form-control">
@@ -19,14 +19,17 @@
             <input type="password" name="password" required autocomplete="new-password" class="form-control">
         </div><br>
         <div class="form-group">
-            <label for="confirm password" class="form-label">Confirm Password</label>
-            <input type="password" name="confirm password" required autocomplete="new-password" class="form-control">
+            <label for="confirm_password" class="form-label">Confirm Password</label>
+            <input type="password" name="confirm_password" required autocomplete="new-password" class="form-control">
+        </div><br>
+        <div class="form-group">
+            <label for="contact" class="form-label">Contact</label>
+            <input type="number" name="contact" class="form-control">
         </div><br>
         <div class="form-group">
             <label for="role" class="form-label">Select Role</label>
-            <select id="role" name="role">
+            <select id="role" name="role" class="form-select" required>
                 <option value="Select role">Select Role</option>
-                <option value="Admin">Admin</option>
                 <option value="Staff">Staff</option>
                 <option value="User">User</option>
             </select>
@@ -34,7 +37,7 @@
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Register</button>
         </div>
-    </form><br>
+    </form>
     <h4>Already have an account? </h4>
     <a href="{{ url_for('login') }}">Login here</a>
 
