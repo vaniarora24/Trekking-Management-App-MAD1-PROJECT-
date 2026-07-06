@@ -52,14 +52,12 @@ class Booking(db.Model):
     booking_date= db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     status= db.Column(db.String(10), default="booked")
 
-
 class AssignedTreks(db.Model):
     __tablename__="assigned_treks"
     id= db.Column(db.Integer(), primary_key=True)
     staff_id= db.Column(db.Integer(), db.ForeignKey('users.id'))
     trek_id= db.Column(db.Integer(), db.ForeignKey('trekking.trek_id'))
     assigned_date= db.Column(db.DateTime, default=datetime.utcnow)
-
 
 def auth_required(func):
     @wraps(func)
@@ -71,9 +69,25 @@ def auth_required(func):
             return redirect(url_for('login'))
     return inner
 
+def admin_required(func):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('You are not logged in to the page!')
+            return redirect(url_for('login'))
+        user= User.query.get(session['user_id'])
+        if not user.is_admin:
+            flash('You are not authorized to access this page!')
+            return redirect(url_for('index'))
+        return func(*args, **kwargs)
+    return inner
+
 @app.route('/')
 @auth_required
 def index():
+    user= User.query.get(session['user_id'])
+    if user.is_admin:
+        return redirect(url_for('admin'))
     return render_template("index.html", var1="VANI's")
 
 @app.route('/login')
@@ -182,6 +196,47 @@ def edit_profile():
 def logout():
     session.pop('user_id')
     return redirect(url_for('login'))
+
+@app.route('/admin')
+@admin_required
+def admin():
+    return render_template('admin/dashboard.html')
+
+@app.route('/trek/manage')
+@admin_required
+def manage_trek():
+    return render_template('admin/manage_trek.html')
+
+@app.route('/trek/add')
+@admin_required
+def add_trek():
+    staffs= User.query.filter_by(role="Staff").all()
+    return render_template('admin/add_trek.html', staffs=staffs)
+@app.route('/trek/add', methods=['POST'])
+@admin_required
+def add_trek_post():
+    trekname = request.form.get('trekname')
+    location =request.form.get('location')
+    difficulty =request.form.get('difficulty')
+    duration_in_days =request.form.get('duration_in_days')
+    available_slots =request.form.get('available_slots')
+    start_date =request.form.get('start_date')
+    end_date =request.form.get('end_date')
+    assigned_staff_id =request.form.get('assigned_staff_id')
+    status=request.form.get('status')
+    if not trekname or not location or not status:
+        flash("Please fill out all the details")
+        return redirect(url_for('add_trek_post'))
+    new_trek= Trek(trek_name=trekname, location=location, difficulty=difficulty, duration_in_days=duration_in_days, available_slots=available_slots, total_slots=available_slots, start_date=start_date, end_date=end_date, assigned_staff_id=assigned_staff_id, status=status)
+    db.session.add(new_trek)
+    db.session.commit()
+    flash('Trek added successfully!')
+    return redirect(url_for('manage_trek'))
+
+@app.route('/booking')
+@admin_required
+def booking():
+    return render_template('admin/dashboard.html')
 
 if __name__ == "__main__":
     with app.app_context():

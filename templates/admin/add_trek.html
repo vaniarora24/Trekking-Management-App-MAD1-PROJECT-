@@ -1,0 +1,73 @@
+{% extends 'layout.html' %}
+{% block title %}
+    ADD TREKS 
+{% endblock %}
+
+
+{% block content %}
+    <h4 class='display-4'>ADMIN DASHBOARD</h4>
+    <h2>Add treks</h2>
+    <form action="" method="POST" class="form">
+        <div class="form-group">
+            <label for="trekname" class="form-label">Trekname</label>
+            <input type="text" name="trekname" required class="form-control">
+        </div><br>
+        <div class="form-group">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" name="location" required class="form-control">
+        </div><br>
+        <div class="form-group">
+            <label for="difficulty" class="form-label">Difficulty</label>
+            <select id="difficulty" name="difficulty" class="form-select" required>
+                <option value="role">--Level--</option>
+                <option value="role">Easy</option>
+                <option value="Staff">Medium</option>
+                <option value="User">Hard</option>
+            </select>
+        </div><br>
+        <div class="form-group">
+            <label for="duration_in_days" class="form-label">Duration(in days)</label>
+            <input type="number" name="duration_in_days" required class="form-control">
+        </div><br>
+        <div class="form-group">
+            <label for="available_slots" class="form-label">Available Slots</label>
+            <input type="number" name="available_slots" required class="form-control">
+        </div><br>
+        <div class="form-group">
+            <label for="start_date" class="form-label">Start Date</label>
+            <input type="date" name="start_date" class="form-control">
+        </div><br>
+        <div class="form-group">
+            <label for="end_date" class="form-label">End Date</label>
+            <input type="date" name="end_date" class="form-control">
+        </div><br>
+        <div class="form-group">
+            <label for="assigned_staff_id" class="form-label">Assigned Staff ID</label>
+            <select id="assigned_staff_id" name="assigned_staff_id" class="form-select" required>
+                <option value="">--staff--</option>
+                {% for staff in staffs %}
+                <option value="{{ staff.id }}">
+                    {{ staff.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div><br>
+        <div class="form-group">
+            <label for="status" class="form-label">Status</label>
+            <select id="status" name="status" class="form-select" required>
+                <option value="role">--status--</option>
+                <option value="role">Open</option>
+                <option value="Staff">Close</option>
+            </select>
+        </div><br>
+        <div class="form-group">
+            <label for="description" class="form-label">Description (optional)</label>
+            <input type="text" name="description" class="form-control">
+        </div><br>
+        <div class="form-group">
+            <button type="button" class="btn btn-danger">Cancel</button>
+            <button type="submit" class="btn btn-success">Save</button>
+        </div>
+
+    </form>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+{% block title %}
+    ADMIN 
+{% endblock %}
+
+
+{% block content %}
+    <h1 class='display-1'>ADMIN DASHBOARD</h1>
+    <h3 class="display-3">Recent Bookings</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>User</th>
+                <th>Trek</th>
+                <th>Booking Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{booking.booking_id}}</td>
+                <td>{{booking.user_id}}</td>
+                <td>{{booking.trek_id}}</td>
+                <td>{{booking.booking_date}}</td>
+                <td>{{booking.status}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
