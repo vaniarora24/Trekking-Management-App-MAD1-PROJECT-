@@ -3,8 +3,8 @@
     ADD TREKS 
 {% endblock %}
 
-
 {% block content %}
+{% include 'admin/admin_navbar.html' %}
     <h4 class='display-4'>ADMIN DASHBOARD</h4>
     <h2>Add treks</h2>
     <form action="" method="POST" class="form">
@@ -19,10 +19,10 @@
         <div class="form-group">
             <label for="difficulty" class="form-label">Difficulty</label>
             <select id="difficulty" name="difficulty" class="form-select" required>
-                <option value="role">--Level--</option>
-                <option value="role">Easy</option>
-                <option value="Staff">Medium</option>
-                <option value="User">Hard</option>
+                <option value="">--Level--</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
             </select>
         </div><br>
         <div class="form-group">
@@ -55,9 +55,9 @@
         <div class="form-group">
             <label for="status" class="form-label">Status</label>
             <select id="status" name="status" class="form-select" required>
-                <option value="role">--status--</option>
-                <option value="role">Open</option>
-                <option value="Staff">Close</option>
+                <option value="">--status--</option>
+                <option value="Open">Open</option>
+                <option value="Close">Close</option>
             </select>
         </div><br>
         <div class="form-group">

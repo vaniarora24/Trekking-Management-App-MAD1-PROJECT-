@@ -32,8 +32,9 @@ class User(db.Model):
 
 class Trek(db.Model):
     __tablename__="trekking"
+
     trek_id = db.Column(db.Integer, primary_key=True)
-    trek_name= db.Column(db.String(32), unique=True)
+    trek_name= db.Column(db.String(32), nullable=False)
     location= db.Column(db.String(60), nullable=False)
     difficulty= db.Column(db.String(10), nullable=False, default="moderate")
     duration_in_days= db.Column(db.Integer(), nullable=False)
@@ -205,7 +206,22 @@ def admin():
 @app.route('/trek/manage')
 @admin_required
 def manage_trek():
-    return render_template('admin/manage_trek.html')
+    treks= Trek.query.all()
+    return render_template('admin/manage_trek.html', treks=treks)
+
+@app.route('/trek/<int:trek_id>/edit')
+@admin_required
+def edit_trek(trek_id):
+    return render_template('admin/edit_trek.html')
+
+@app.route('/trek/<int:trek_id>/delete')
+@admin_required
+def delete_trek(trek_id):
+    trek= Trek.query.get_or_404(trek_id)
+    db.session.delete(trek)
+    db.session.commit()
+    flash('Trek deleted successfully!')
+    return redirect(url_for('manage_trek'))
 
 @app.route('/trek/add')
 @admin_required
@@ -218,15 +234,20 @@ def add_trek_post():
     trekname = request.form.get('trekname')
     location =request.form.get('location')
     difficulty =request.form.get('difficulty')
-    duration_in_days =request.form.get('duration_in_days')
-    available_slots =request.form.get('available_slots')
-    start_date =request.form.get('start_date')
-    end_date =request.form.get('end_date')
-    assigned_staff_id =request.form.get('assigned_staff_id')
+    duration_in_days =int(request.form.get('duration_in_days'))
+    available_slots =int(request.form.get('available_slots'))
+    start_date =datetime.strptime(request.form.get('start_date'),"%Y-%m-%d").date()
+    end_date =datetime.strptime(request.form.get('end_date'),"%Y-%m-%d").date()
+    assigned_staff_id =int(request.form.get('assigned_staff_id'))
     status=request.form.get('status')
     if not trekname or not location or not status:
         flash("Please fill out all the details")
         return redirect(url_for('add_trek_post'))
+    
+    existing_trek= Trek.query.filter_by(trek_name=trekname, start_date=start_date).first()
+    if existing_trek:
+        flash('This trek already_exists')
+        return redirect(url_for('add_trek'))
     new_trek= Trek(trek_name=trekname, location=location, difficulty=difficulty, duration_in_days=duration_in_days, available_slots=available_slots, total_slots=available_slots, start_date=start_date, end_date=end_date, assigned_staff_id=assigned_staff_id, status=status)
     db.session.add(new_trek)
     db.session.commit()

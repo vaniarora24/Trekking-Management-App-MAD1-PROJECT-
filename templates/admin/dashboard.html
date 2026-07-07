@@ -2,11 +2,10 @@
 {% block title %}
     ADMIN 
 {% endblock %}
-
-
 {% block content %}
-    <h1 class='display-1'>ADMIN DASHBOARD</h1>
-    <h3 class="display-3">Recent Bookings</h3>
+{% include 'admin/admin_navbar.html' %}
+    <h1 class="display-1">ADMIN DASHBOARD</h1>
+    <h2>Recent Bookings</h2>
     <table class="table">
         <thead>
             <tr>
