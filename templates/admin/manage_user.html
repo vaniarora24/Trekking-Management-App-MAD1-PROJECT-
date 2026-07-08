@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+{% block title %}
+    MANAGE USERS
+{% endblock %}
+
+{% block content %}
+<br>
+{% include 'admin/admin_navbar.html' %}
+<br><br>
+    <h4 class='display-4'>MANAGE USERS</h4>
+    <br>
+    <a href="{{url_for('manage_user',status='Pending')}}" class="btn btn-warning">Pending- {{ pending_count }}</a>
+    <a href="{{url_for('manage_user',status='Approved')}}" class="btn btn-info">Approved- {{ approved_count }}</a>
+    <a href="{{url_for('manage_user',status='Blacklisted')}}" class="btn btn-danger">Blacklisted- {{ blacklisted_count }}</a>
+    <a href="{{url_for('manage_user')}}" class="btn btn-dark"> Show all- {{total_count}}</a>
+    <br><br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{user.id}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.contact}}</td>
+                <td>
+                    {% if user.blacklisted %}
+                        Blacklisted
+                    {% elif user.approved %}
+                        Approved
+                    {% else %}
+                        Pending
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{url_for('approved_user', id=user.id)}}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Approve
+                    </a>
+                    <a href="{{url_for('blacklisted_user', id=user.id)}}" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Reject
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+{% endblock %}

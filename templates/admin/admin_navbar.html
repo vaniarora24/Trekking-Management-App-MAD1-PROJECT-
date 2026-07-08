@@ -12,32 +12,26 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <!--<li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('admin') }}">Dashboard</a>
-                </li>-->
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('manage_trek') }}">Trek</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Staff</a>
+                    <a class="nav-link" href="{{url_for('manage_staff')}}">Staff</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Users</a>
+                    <a class="nav-link" href="{{url_for('manage_user')}}">Users</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Bookings</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="">Report</a>
+                    <a class="nav-link" href="{{url_for('booking')}}">Bookings</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="">Search</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Report</a>
+                    <a class="nav-link" href="{{url_for('report')}}">Reports</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Settings</a>
+                    <a class="nav-link" href="{{url_for('setting')}}">Settings</a>
                 </li>
                 <!--issi ko copy krke pura navbar bnana h
                 <li class="nav-item dropdown">

@@ -4,15 +4,20 @@
 {% endblock %}
 
 {% block content %}
+<br>
 {% include 'admin/admin_navbar.html' %}
-    <h4 class='display-4'>ADMIN DASHBOARD</h4>
-    <h2>Manage treks</h2>
+    <br>
+    <h4 class='display-4'>MANAGE TREKS</h4>
     <div class="text-end">
         <a href="{{ url_for('add_trek') }}" class="btn btn-success">
             <i class="fas fa-plus"></i>
             Add New Treks
         </a><br>
-    </div>
+    </div><br>
+    <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form><br>
     <table class="table">
         <thead>
             <tr>

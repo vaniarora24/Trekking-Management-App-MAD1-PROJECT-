@@ -4,9 +4,10 @@
 {% endblock %}
 
 {% block content %}
+<br>
 {% include 'admin/admin_navbar.html' %}
-    <h4 class='display-4'>ADMIN DASHBOARD</h4>
-    <h2>Add treks</h2>
+<br>
+    <h4 class='display-4'>ADD TREKS</h4>
     <form action="" method="POST" class="form">
         <div class="form-group">
             <label for="trekname" class="form-label">Trekname</label>
@@ -42,7 +43,7 @@
             <input type="date" name="end_date" class="form-control">
         </div><br>
         <div class="form-group">
-            <label for="assigned_staff_id" class="form-label">Assigned Staff ID</label>
+            <label for="assigned_staff_id" class="form-label">Assigned Staff</label>
             <select id="assigned_staff_id" name="assigned_staff_id" class="form-select" required>
                 <option value="">--staff--</option>
                 {% for staff in staffs %}
@@ -56,6 +57,9 @@
             <label for="status" class="form-label">Status</label>
             <select id="status" name="status" class="form-select" required>
                 <option value="">--status--</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Completed">Completed</option>
                 <option value="Open">Open</option>
                 <option value="Close">Close</option>
             </select>
@@ -68,6 +72,5 @@
             <button type="button" class="btn btn-danger">Cancel</button>
             <button type="submit" class="btn btn-success">Save</button>
         </div>
-
     </form>
 {% endblock %}

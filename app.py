@@ -29,10 +29,10 @@ class User(db.Model):
     approved = db.Column(db.Boolean, default=False, nullable=False)
     blacklisted = db.Column(db.Boolean, default=False)
     date_of_creating_user = db.Column(db.DateTime, default=datetime.utcnow)
+    bookings = db.relationship("Booking", back_populates="user")
 
 class Trek(db.Model):
     __tablename__="trekking"
-
     trek_id = db.Column(db.Integer, primary_key=True)
     trek_name= db.Column(db.String(32), nullable=False)
     location= db.Column(db.String(60), nullable=False)
@@ -44,6 +44,7 @@ class Trek(db.Model):
     status= db.Column(db.String(10), default="Open")
     start_date= db.Column(db.Date())
     end_date= db.Column(db.Date())
+    bookings = db.relationship("Booking", back_populates="trek")
 
 class Booking(db.Model):
     __tablename__="booking"
@@ -52,6 +53,8 @@ class Booking(db.Model):
     trek_id= db.Column(db.Integer(), db.ForeignKey('trekking.trek_id'))
     booking_date= db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     status= db.Column(db.String(10), default="booked")
+    user = db.relationship("User", back_populates="bookings")
+    trek = db.relationship("Trek", back_populates="bookings")
 
 class AssignedTreks(db.Model):
     __tablename__="assigned_treks"
@@ -110,11 +113,14 @@ def login_post():
         flash('Invalid password')
         return redirect(url_for('login'))
     if user.role == "Staff" and not user.approved:
-        flash("Your account is awaiting admin approval.")
+        if user.blacklisted == True:
+            flash('Your account is rejected!')
+            return redirect(url_for('login'))
+        flash("Your account is awaiting admin approval")
         return redirect(url_for('login'))
 
     session['user_id'] = user.id
-    flash('Login Successful!')
+    flash('Login successful!')
     return redirect(url_for('index'))
 
 @app.route('/register')
@@ -128,8 +134,7 @@ def register_post():
     password= request.form.get('password')
     confirm_password= request.form.get('confirm_password')
     contact = request.form.get('contact')
-    role = request.form.get('role')
-    
+    role = request.form.get('role')    
     if not fullname or not email or not password or not confirm_password or not role:
         flash('Please fill out all the details')
         return redirect(url_for('register'))
@@ -137,15 +142,14 @@ def register_post():
         flash("Password donot match")
         return redirect(url_for('register'))
     user= User.query.filter_by(email=email).first()
-
     if user:
         flash('User with this email already exists')
         return redirect(url_for('register'))
-    
     password_hash= generate_password_hash(password)
     new_user= User(username=email, email=email, passhash=password_hash, name=fullname, contact=contact, role=role)
     db.session.add(new_user)
     db.session.commit()
+    flash('Registration successful!')
     return redirect(url_for('login'))
 
 @app.route('/profile')
@@ -162,16 +166,13 @@ def edit_profile():
     password= request.form.get('password')
     name= request.form.get('name')
     email= request.form.get('email')
-
     if not username or not cpassword or not password or not name or not email:
         flash('Please fill all the details!')
         return redirect(url_for('profile'))
-    
     user= User.query.get(session['user_id'])
     if not check_password_hash(user.passhash, cpassword):
         flash('Incorrect password')
         return redirect(url_for('profile'))
-    
     if username != user.username:
         new_username= User.query.filter_by(username=username).first()
         if new_username:
@@ -182,7 +183,6 @@ def edit_profile():
         if new_email:
             flash('User already exists!')
             return redirect(url_for('profile'))
-        
     new_password_hash= generate_password_hash(password)
     user.username= username
     user.email= email
@@ -201,7 +201,12 @@ def logout():
 @app.route('/admin')
 @admin_required
 def admin():
-    return render_template('admin/dashboard.html')
+    recent_bookings= Booking.query.order_by(Booking.booking_date.desc()).limit(3).all()
+    trek_count= Trek.query.count()
+    user_count= User.query.filter_by(role='User').count()
+    staff_count= User.query.filter_by(role='Staff').count()
+    booking_count= Booking.query.count()
+    return render_template('admin/dashboard.html', bookings=recent_bookings, trek_count=trek_count, user_count=user_count, staff_count=staff_count, booking_count=booking_count)
 
 @app.route('/trek/manage')
 @admin_required
@@ -212,7 +217,44 @@ def manage_trek():
 @app.route('/trek/<int:trek_id>/edit')
 @admin_required
 def edit_trek(trek_id):
-    return render_template('admin/edit_trek.html')
+    trek= Trek.query.filter_by(trek_id=trek_id).first()
+    staffs = User.query.filter_by(role="Staff", approved=True, blacklisted=False).all() #, approved=True
+    return render_template('admin/edit_trek.html', trek=trek, staffs=staffs)
+
+@app.route('/trek/<int:trek_id>/edit', methods=['POST'])
+@admin_required
+def edit_trek_post(trek_id):
+    trek= Trek.query.filter_by(trek_id=trek_id).first()
+
+    trekname = request.form.get('trekname')
+    location =request.form.get('location')
+    difficulty =request.form.get('difficulty')
+    duration_in_days =int(request.form.get('duration_in_days'))
+    available_slots =int(request.form.get('available_slots'))
+    start_date =datetime.strptime(request.form.get('start_date'),"%Y-%m-%d").date()
+    end_date =datetime.strptime(request.form.get('end_date'),"%Y-%m-%d").date()
+    assigned_staff_id =int(request.form.get('assigned_staff_id'))
+    status=request.form.get('status')
+    if not trekname or not location or not status or not difficulty or not duration_in_days or not available_slots or not end_date or not assigned_staff_id:
+        flash("Please fill out all the details")
+        return redirect(url_for('edit_trek_post'))
+    existing_trek= Trek.query.filter_by(trek_name=trekname, location=location, start_date=start_date, difficulty=difficulty, duration_in_days=duration_in_days, available_slots=available_slots, assigned_staff_id=assigned_staff_id, status=status).first()
+    if existing_trek:
+        flash('This trek already exists')
+        return redirect(url_for('edit_trek', trek_id=trek_id))
+    trek.trek_name= trekname
+    trek.location= location
+    trek.difficulty= difficulty
+    trek.duration_in_days= duration_in_days
+    trek.start_date= start_date
+    trek.end_date= end_date
+    trek.available_slots= available_slots
+    trek.assigned_staff_id= assigned_staff_id
+    trek.status= status
+    db.session.commit()
+    flash('Trek details edited successfully!')
+    return redirect(url_for('manage_trek'))
+
 
 @app.route('/trek/<int:trek_id>/delete')
 @admin_required
@@ -226,8 +268,9 @@ def delete_trek(trek_id):
 @app.route('/trek/add')
 @admin_required
 def add_trek():
-    staffs= User.query.filter_by(role="Staff").all()
+    staffs= User.query.filter_by(role="Staff", approved=True, blacklisted=False).all()
     return render_template('admin/add_trek.html', staffs=staffs)
+
 @app.route('/trek/add', methods=['POST'])
 @admin_required
 def add_trek_post():
@@ -254,10 +297,119 @@ def add_trek_post():
     flash('Trek added successfully!')
     return redirect(url_for('manage_trek'))
 
+@app.route('/staff/manage')
+@admin_required
+def manage_staff():
+    status= request.args.get('status')
+    if status == 'Pending':
+        staffs= User.query.filter_by(role='Staff', approved=False, blacklisted=False).all()
+    elif status == "Approved":
+        staffs= User.query.filter_by(role='Staff', approved=True, blacklisted=False).all()
+    elif status == "Blacklisted":
+        staffs= User.query.filter_by(role='Staff', approved=False, blacklisted=True).all()
+    else:
+        staffs= User.query.filter_by(role='Staff').all()
+    total_count= User.query.filter_by(role='Staff').count()
+    pending_count= User.query.filter_by(role='Staff', approved=False, blacklisted=False).count()
+    approved_count= User.query.filter_by(role='Staff', approved=True, blacklisted=False).count()
+    blacklisted_count= User.query.filter_by(role='Staff', approved=False, blacklisted=True).count()
+    return render_template('admin/manage_staff.html', staffs=staffs, pending_count=pending_count, approved_count=approved_count, blacklisted_count=blacklisted_count, total_count=total_count)
+@app.route('/staff/<int:id>/approved')
+def approved_staff(id):
+    staff= User.query.get_or_404(id)
+    staff.approved=True
+    staff.blacklisted=False
+    db.session.commit()
+    flash('Staff approved successfully!')
+    return redirect(url_for('manage_staff'))
+@app.route('/staff/<int:id>/blacklisted')
+def blacklisted_staff(id):
+    staff= User.query.get_or_404(id)
+    staff.approved=False
+    staff.blacklisted=True
+    db.session.commit()
+    flash('Staff rejected!')
+    return redirect(url_for('manage_staff'))
+
+@app.route('/user/manage')
+@admin_required
+def manage_user():
+    status= request.args.get('status')
+    if status == 'Pending':
+        users= User.query.filter_by(role='User', approved=False, blacklisted=False).all()
+    elif status == "Approved":
+        users= User.query.filter_by(role='User', approved=True, blacklisted=False).all()
+    elif status == "Blacklisted":
+        users= User.query.filter_by(role='User', approved=False, blacklisted=True).all()
+    else:
+        users= User.query.filter_by(role='User').all()
+    total_count= User.query.filter_by(role='User').count()
+    pending_count= User.query.filter_by(role='User', approved=False, blacklisted=False).count()
+    approved_count= User.query.filter_by(role='User', approved=True, blacklisted=False).count()
+    blacklisted_count= User.query.filter_by(role='User', approved=False, blacklisted=True).count()
+    return render_template('admin/manage_user.html', users=users, total_count=total_count, pending_count=pending_count, approved_count=approved_count, blacklisted_count=blacklisted_count)
+@app.route('/user/<int:id>/approved')
+def approved_user(id):
+    user= User.query.get_or_404(id)
+    user.approved=True
+    user.blacklisted=False
+    db.session.commit()
+    flash('User approved successfully!')
+    return redirect(url_for('manage_user'))
+@app.route('/user/<int:id>/blacklisted')
+def blacklisted_user(id):
+    user= User.query.get_or_404(id)
+    user.approved=False
+    user.blacklisted=True
+    db.session.commit()
+    flash('User rejected!')
+    return redirect(url_for('manage_user'))
+
 @app.route('/booking')
 @admin_required
 def booking():
-    return render_template('admin/dashboard.html')
+    bookings= Booking.query.all()
+    return render_template('admin/booking.html', bookings=bookings)
+
+@app.route('/report')
+@admin_required
+def report():
+    recent_bookings= Booking.query.order_by(Booking.booking_date.desc()).limit(3).all()
+    trek_count= Trek.query.count()
+    user_count= User.query.filter_by(role='User').count()
+    staff_count= User.query.filter_by(role='Staff').count()
+    booking_count= Booking.query.count()
+    
+    pending_count= User.query.filter_by(role='User', approved=False, blacklisted=False).count()
+    approved_count= User.query.filter_by(role='User', approved=True, blacklisted=False).count()
+    blacklisted_count= User.query.filter_by(role='User', approved=False, blacklisted=True).count()
+    return render_template('admin/report.html', bookings=recent_bookings, trek_count=trek_count, user_count=user_count, staff_count=staff_count, booking_count=booking_count, pending_count=pending_count, approved_count=approved_count, blacklisted_count=blacklisted_count)
+
+@app.route('/setting')
+@admin_required
+def setting():
+    return render_template('admin/setting.html')
+
+@app.route('/setting', methods=['POST'])
+@admin_required
+def setting_post():
+    cpassword= request.form.get('cpassword')
+    password= request.form.get('password')
+    if not cpassword or not password:
+        flash('Please fill all the details!')
+        return redirect(url_for('setting'))
+    admin= User.query.get(session['user_id'])
+    if not check_password_hash(admin.passhash, cpassword):
+        flash('Incorrect password')
+        return redirect(url_for('setting'))
+    new_password_hash= generate_password_hash(password)
+    if cpassword == password:
+        flash(' Current password and new password cannot be same!')
+        return redirect(url_for('setting'))
+    admin.passhash= new_password_hash
+    flash('Password updated successfully!')
+    return redirect(url_for('setting'))
+
 
 if __name__ == "__main__":
     with app.app_context():

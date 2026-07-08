@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Bookings
+{% endblock %}
+{% block content %}
+<br>
+{% include 'admin/admin_navbar.html' %}
+<br>
+    <h2 class="display-2">Bookings</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>User</th>
+                <th>Trek</th>
+                <th>Booking Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{booking.booking_id}}</td>
+                <td>{{booking.user.name}}</td>
+                <td>{{booking.trek.trek_name}}</td>
+                <td>{{booking.booking_date}}</td>
+                <td>{{booking.status}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

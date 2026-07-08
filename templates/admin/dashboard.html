@@ -3,9 +3,47 @@
     ADMIN 
 {% endblock %}
 {% block content %}
+<br>
 {% include 'admin/admin_navbar.html' %}
+<br>
     <h1 class="display-1">ADMIN DASHBOARD</h1>
     <h2>Recent Bookings</h2>
+    <br>
+    <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card border-primary">
+                    <div class="card-body text-center">
+                        <h5>Total Treks</h5>
+                        <h3>{{ trek_count }}</h3>
+                    </div>
+                </div>
+            </div>
+        <div class="col-md-3">
+            <div class="card border-danger">
+                <div class="card-body text-center">
+                    <h5>Total Users</h5>
+                    <h3>{{ user_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <h5>Total Staff</h5>
+                    <h3>{{ staff_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <h5>Total Bookings</h5>
+                    <h3>{{ booking_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
     <table class="table">
         <thead>
             <tr>
@@ -20,12 +58,15 @@
             {% for booking in bookings %}
             <tr>
                 <td>{{booking.booking_id}}</td>
-                <td>{{booking.user_id}}</td>
-                <td>{{booking.trek_id}}</td>
+                <td>{{booking.user.name}}</td>
+                <td>{{booking.trek.trek_name}}</td>
                 <td>{{booking.booking_date}}</td>
                 <td>{{booking.status}}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <div class="text-end">
+        <a href="{{url_for('booking')}}">View All Bookings</a>
+    </div>
 {% endblock %}

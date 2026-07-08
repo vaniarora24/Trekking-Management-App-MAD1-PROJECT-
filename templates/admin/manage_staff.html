@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+{% block title %}
+    MANAGE STAFFS
+{% endblock %}
+
+{% block content %}
+<br>
+{% include 'admin/admin_navbar.html' %}
+<br><br>
+    <h4 class='display-4'>MANAGE STAFFS</h4>
+    <br>
+    <a href="{{url_for('manage_staff',status='Pending')}}" class="btn btn-warning">Pending- {{ pending_count }}</a>
+    <a href="{{url_for('manage_staff',status='Approved')}}" class="btn btn-info">Approved- {{ approved_count }}</a>
+    <a href="{{url_for('manage_staff',status='Blacklisted')}}" class="btn btn-danger">Blacklisted- {{ blacklisted_count }}</a>
+    <a href="{{url_for('manage_staff')}}" class="btn btn-dark"> Show all- {{total_count}}</a>
+    <br><br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Staff ID</th>
+                <th>Staff Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for staff in staffs %}
+            <tr>
+                <td>{{staff.id}}</td>
+                <td>{{staff.name}}</td>
+                <td>{{staff.email}}</td>
+                <td>{{staff.contact}}</td>
+                <td>
+                    {% if staff.blacklisted %}
+                        Blacklisted
+                    {% elif staff.approved %}
+                        Approved
+                    {% else %}
+                        Pending
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{url_for('approved_staff', id=staff.id)}}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Approve
+                    </a>
+                    <a href="{{url_for('blacklisted_staff', id=staff.id)}}" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Reject
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+{% endblock %}

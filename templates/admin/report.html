@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+{% block title %}
+    REPORTS
+{% endblock %}
+
+{% block content %}
+<br>
+{% include 'admin/admin_navbar.html' %}
+<br><br>
+    <h4 class="display-4">REPORTS</h4>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <h5>Total Treks</h5>
+                    <h3>{{ trek_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-danger">
+                <div class="card-body text-center">
+                    <h5>Total Users</h5>
+                    <h3>{{ user_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <h5>Total Staff</h5>
+                    <h3>{{ staff_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <h5>Total Bookings</h5>
+                    <h3>{{ booking_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div><br>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <h5>Pending Staffs</h5>
+                    <h3>{{ pending_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-danger">
+                <div class="card-body text-center">
+                    <h5>Approved Staffs</h5>
+                    <h3>{{ approved_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <h5>Blacklisted Staffs</h5>
+                    <h3>{{ blacklisted_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+{% endblock %}
+
+
+
