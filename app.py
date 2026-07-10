@@ -214,6 +214,11 @@ def manage_trek():
     treks= Trek.query.all()
     return render_template('admin/manage_trek.html', treks=treks)
 
+@app.route('/search')
+@admin_required
+def search():
+    return render_template('admin/search.html')
+
 @app.route('/trek/<int:trek_id>/edit')
 @admin_required
 def edit_trek(trek_id):
@@ -409,6 +414,36 @@ def setting_post():
     admin.passhash= new_password_hash
     flash('Password updated successfully!')
     return redirect(url_for('setting'))
+
+@app.route('/staff')
+@auth_required
+def staff():
+    staff_id= session['user_id']
+    assigned_trek= Trek.query.filter_by(assigned_staff_id=staff_id).limit(3).all()
+    assigned_trek_count= Trek.query.filter_by(assigned_staff_id=staff_id).count()
+    participant_count= User.query.filter_by(role='User').count()
+    open_trek_count= Trek.query.filter_by(assigned_staff_id=staff_id ,status='Open').count()
+    return render_template('staff/staff_dashboard.html',treks=assigned_trek, assigned_trek=assigned_trek, assigned_trek_count=assigned_trek_count, participant_count=participant_count, open_trek_count=open_trek_count)
+
+@app.route('/staff/staff_manage_trek')
+@auth_required
+def staff_manage_trek():
+    staff_id= session['user_id']
+    trek= Trek.query.filter_by(assigned_staff_id=staff_id).all()
+    return render_template('staff/staff_manage_trek.html', treks=trek)
+
+@app.route('/staff/staff_manage_trek/<int:trek_id>', methods=['GET', 'POST'])
+@auth_required
+def staff_trek_detail(trek_id):
+    staff_id = session['user_id']
+    trek = Trek.query.filter_by(trek_id=trek_id,assigned_staff_id=staff_id).first_or_404()
+    if request.method=="POST":
+        trek.available_slots= int(request.form['available_slots'])
+        trek.status= request.form['status']
+        db.session.commit()
+        flash('Updated successfully!')
+        return redirect(url_for('staff_trek_detail', trek_id= trek.trek_id))
+    return render_template('staff/staff_manage_trek.html',treks=[trek])
 
 
 if __name__ == "__main__":
