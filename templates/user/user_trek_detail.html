@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+{% block title %}
+    trek details
+{% endblock %}
+{% block content %}
+<br>
+{% include 'user/user_navbar.html' %}
+<br>
+    <h1 class="display-1">{{trek.trek_name}}</h1>
+    <h2>Available Treks</h2>
+    <br>
+    <table class="table">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <td>{{trek.location}}</td>
+                </tr>
+                <tr>
+                    <th>Difficulty</th>
+                    <td>{{trek.difficulty}}</td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td>{{trek.duration_in_days}}</td>
+                </tr>    
+                <tr>
+                    <th>Start Date</th>
+                    <td>{{trek.start_date}}</td>
+                </tr>  
+                <tr>
+                    <th>End Date</th>
+                    <td>{{trek.end_date}}</td>
+                </tr>
+                <tr>   
+                    <th>Available Slots</th>
+                    <td>{{trek.available_slots}}</td>
+                </tr>
+            </thead>
+        </table>
+        <a href="{{ url_for('book_now', trek_id=trek.trek_id) }}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Book Now
+        </a>
+
+{% endblock %}
+
+

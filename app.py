@@ -445,6 +445,48 @@ def staff_trek_detail(trek_id):
         return redirect(url_for('staff_trek_detail', trek_id= trek.trek_id))
     return render_template('staff/staff_manage_trek.html',treks=[trek])
 
+@app.route('/user')
+@auth_required
+def user():
+    user= User.query.get(session['user_id'])
+    treks= Trek.query.filter_by(status='Open').all()
+    bookings= Booking.query.filter_by(user_id= session['user_id']).all()
+    return render_template("user/user_dashboard.html", user=user, treks=treks, bookings=bookings)
+
+@app.route('/user_trek_detail/<int:trek_id>')
+@auth_required
+def user_trek_detail(trek_id):
+    trek= Trek.query.get_or_404(trek_id)
+    return render_template('user/user_trek_detail.html', trek=trek)
+
+@app.route('/book_now/<int:trek_id>')
+@auth_required
+def book_now(trek_id):
+    user_id= session['user_id']
+    trek= Trek.query.get_or_404(trek_id)
+    if trek.available_slots <=0:
+        flash('No seats available!')
+        return redirect(url_for('user'))
+    existing_booking= Booking.query.filter_by(user_id=user_id, trek_id=trek_id).first()
+    if existing_booking:
+        flash('You have already booked this trek!')
+        return redirect(url_for('user'))
+    booking= Booking(user_id= user_id, trek_id= trek.trek_id, status= "Booked")
+    db.session.add(booking)
+    trek.available_slots -= 1
+    db.session.commit()
+    flash("Trek booked successfully!")
+    return redirect(url_for('user'))
+
+@app.route('/user/my_booking')
+@auth_required
+def my_booking():
+    bookings= Booking.query.filter_by(user_id= session['user_id']).all()
+    return render_template('user/my_booking.html', bookings=bookings)
+
+
+
+
 
 if __name__ == "__main__":
     with app.app_context():
