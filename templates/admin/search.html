@@ -1,19 +1,86 @@
 {% extends 'layout.html' %}
 {% block title %}
-    MANAGE TREKS 
+    SEARCH TRKES
 {% endblock %}
 
 {% block content %}
 <br>
 {% include 'admin/admin_navbar.html' %}
+<br>
+<h1 class="display-1">Search Trek</h1>
+<br>
+    <form method="GET">
+    <div class="row">
+        <div class="col-md-4">
+            <input
+                type="text"
+                name="search"
+                value="{{search}}"
+                class="form-control"
+                placeholder="Search Trek">
+        </div>
+        <div class="col-md-3">
+            <select name="difficulty" class="form-select">
+                <option value="">--All Difficulty--</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input
+                type="text"
+                name="location"
+                value="{{location}}"
+                class="form-control"
+                placeholder="Location">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success w-100">
+                Search
+            </button>
+        </div>
+    </div>
+    </form>
     <br>
-    
-    </div><br>
-    <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-        <button class="btn btn-outline-success" type="submit">Search</button>
-    </form><br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Trek</th>
+                <th>Location</th>
+                <th>Difficulty</th>
+                <th>Duration</th>
+                <th>Seats Left</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trek in treks %}
+            <tr>
+                <td>{{trek.trek_name}}</td>
+                <td>{{trek.location}}</td>
+                <td>{{trek.difficulty}}</td>
+                <td>{{trek.duration_in_days}} Days</td>
+                <td>{{trek.available_slots}}</td>
+                <td>
+                {% if trek.status=="Open" %}
+                    Open
+                {% elif trek.status=="Started" %}
+                    Started
+                {% elif trek.status=="Completed" %}
+                    Completed
+                {% else %}
+                    Closed
+                {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
 {% endblock %}
+
 
 
 

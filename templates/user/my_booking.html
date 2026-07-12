@@ -15,7 +15,6 @@
                 <th>Booking Date</th>
                 <th>Trek Dates</th>
                 <th>Status</th>
-                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -24,12 +23,7 @@
                 <td>{{booking.trek.trek_name}}</td>
                 <td>{{booking.booking_date.date()}}</td>
                 <td>{{booking.trek.start_date}} to {{booking.trek.end_date}}</td>
-                <td>{{booking.status}}</td>
-                <td>
-                    <a href="" class="btn btn-primary">
-                        <i class="fas fa-edit"></i>View Details
-                    </a>
-                </td>  
+                <td>{{booking.trek.status}}</td> 
             </tr>
             {% endfor %}
         </tbody>

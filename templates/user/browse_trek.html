@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+{% block title %}
+    BROWSE TRKES
+{% endblock %}
+
+{% block content %}
+<br>
+{% include 'user/user_navbar.html' %}
+<br>
+<h1 class="display-1">Browse Trek</h1>
+<br>
+    <form method="GET">
+    <div class="row">
+        <div class="col-md-4">
+            <input
+                type="text"
+                name="search"
+                value="{{search}}"
+                class="form-control"
+                placeholder="Search Trek">
+        </div>
+        <div class="col-md-3">
+            <select name="difficulty" class="form-select">
+                <option value="">--All Difficulty--</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input
+                type="text"
+                name="location"
+                value="{{location}}"
+                class="form-control"
+                placeholder="Location">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success w-100">
+                Search
+            </button>
+        </div>
+    </div>
+    </form>
+    <br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Trek</th>
+                <th>Location</th>
+                <th>Difficulty</th>
+                <th>Duration</th>
+                <th>Seats Left</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trek in treks %}
+            <tr>
+                <td>{{trek.trek_name}}</td>
+                <td>{{trek.location}}</td>
+                <td>{{trek.difficulty}}</td>
+                <td>{{trek.duration_in_days}} Days</td>
+                <td>{{trek.available_slots}}</td>
+                <td>
+                {% if trek.status=="Open" %}
+                    Open
+                {% elif trek.status=="Started" %}
+                    Started
+                {% elif trek.status=="Completed" %}
+                    Completed
+                {% else %}
+                    Closed
+                {% endif %}
+                </td>
+                <td>
+                    <a href="{{url_for('user_trek_detail',trek_id=trek.trek_id)}}"class="btn btn-info">View Details</a>
+
+                    {% if trek.status=="Open" and trek.available_slots>0 %}
+                        <a href="{{url_for('book_now',trek_id=trek.trek_id)}}"class="btn btn-success">Book Now</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}
+

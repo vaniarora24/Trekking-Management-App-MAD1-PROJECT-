@@ -69,6 +69,43 @@
         </div>
     </div>
     <br>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <hr>
+    <h3 class="mt-4">System Overview</h3>
+    <canvas id="myChart" height="100"></canvas>
+
+    <script>
+        const ctx = document.getElementById('myChart');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Treks', 'Users', 'Staff', 'Bookings'],
+                datasets: [{
+                    label: 'Count',
+                    data: [
+                        {{ trek_count }},
+                        {{ user_count }},
+                        {{ staff_count }},
+                        {{ booking_count }}
+                    ],
+                    backgroundColor: [
+                        '#0d6efd',
+                        '#198754',
+                        '#ffc107',
+                        '#dc3545'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 {% endblock %}
 
 

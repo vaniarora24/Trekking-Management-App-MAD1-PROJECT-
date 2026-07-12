@@ -13,13 +13,13 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="">Browse Treks</a>
+                    <a class="nav-link" href="{{url_for('browse_trek')}}">Browse Treks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('my_booking') }}">My Bookings</a>
+                    <a class="nav-link" href="{{url_for('my_booking')}}">My Bookings</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">History</a>
+                    <a class="nav-link" href="{{url_for('booking_history')}}">History</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{url_for('profile')}}">Profile</a>

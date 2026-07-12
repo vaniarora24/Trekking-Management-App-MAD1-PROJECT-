@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+{% block title %}
+    BOOKING HISTORY
+{% endblock %}
+{% block content %}
+<br>
+{% include 'user/user_navbar.html' %}
+<br>
+    <h2>Booking History</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Trek Name</th>
+                <th>Booking Date</th>
+                <th>Trek Dates</th>
+                <th>Status</th>
+                <th>Trek Staff Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{booking.trek.trek_name}}</td>
+                <td>{{booking.booking_date.date()}}</td>
+                <td>{{booking.trek.start_date}} to {{booking.trek.end_date}}</td>
+                <td>{{booking.trek.status}}</td>
+                <td>{{booking.trek.staff.name}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}
