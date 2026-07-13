@@ -1,4 +1,4 @@
-#Trekking Manegement App
+##Trekking Manegement App
 ## Developer: Vani Arora
 ## Description 
 A Flask-based Trekking Management System where Admin, Staff, and Users can manage trekking activities.

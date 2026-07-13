@@ -54,15 +54,9 @@ class Booking(db.Model):
     trek_id= db.Column(db.Integer(), db.ForeignKey('trekking.trek_id'))
     booking_date= db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     status= db.Column(db.String(10), default="booked")
+    participant_status = db.Column(db.String(20), default="Pending")
     user = db.relationship("User", back_populates="bookings")
     trek = db.relationship("Trek", back_populates="bookings")
-
-class AssignedTreks(db.Model):
-    __tablename__="assigned_treks"
-    id= db.Column(db.Integer(), primary_key=True)
-    staff_id= db.Column(db.Integer(), db.ForeignKey('users.id'))
-    trek_id= db.Column(db.Integer(), db.ForeignKey('trekking.trek_id'))
-    assigned_date= db.Column(db.DateTime, default=datetime.utcnow)
 
 def auth_required(func):
     @wraps(func)
@@ -112,6 +106,9 @@ def login_post():
         return redirect(url_for('login'))
     if not check_password_hash(user.passhash, password):
         flash('Invalid password')
+        return redirect(url_for('login'))
+    if user.blacklisted == True:
+        flash('Your account has been restricted!')
         return redirect(url_for('login'))
     if user.role == "Staff" and not user.approved:
         if user.blacklisted == True:
@@ -265,7 +262,7 @@ def edit_trek_post(trek_id):
     status=request.form.get('status')
     if not trekname or not location or not status or not difficulty or not duration_in_days or not available_slots or not end_date or not assigned_staff_id:
         flash("Please fill out all the details")
-        return redirect(url_for('edit_trek_post'))
+        return redirect(url_for('edit_trek_post', trek_id= trek_id))
     existing_trek= Trek.query.filter_by(trek_name=trekname, location=location, start_date=start_date, difficulty=difficulty, duration_in_days=duration_in_days, available_slots=available_slots, assigned_staff_id=assigned_staff_id, status=status).first()
     if existing_trek:
         flash('This trek already exists')
@@ -410,7 +407,6 @@ def report():
     user_count= User.query.filter_by(role='User').count()
     staff_count= User.query.filter_by(role='Staff').count()
     booking_count= Booking.query.count()
-    
     pending_count= User.query.filter_by(role='Staff', approved=False, blacklisted=False).count()
     approved_count= User.query.filter_by(role='Staff', approved=True, blacklisted=False).count()
     blacklisted_count= User.query.filter_by(role='Staff', approved=False, blacklisted=True).count()
@@ -502,18 +498,39 @@ def mark_trek_completed(trek_id):
     return redirect(url_for('staff_trek_detail', trek_id= trek_id))
 
 
-
 @app.route('/staff/participants')
 @auth_required
 def participant():
-    bookings= Booking.query.all()
-    return render_template('staff/staff_manage_trek.html', bookings= bookings)
+    staff_id = session['user_id']
+    treks = Trek.query.filter_by(assigned_staff_id=staff_id).all()
+    bookings = []
+    for trek in treks:
+        bookings.extend(Booking.query.filter_by(trek_id=trek.trek_id).all())
+    return render_template('staff/participant.html', bookings=bookings)
+
+@app.route('/staff/participant/<int:booking_id>/allow')
+@auth_required
+def allow_participant(booking_id):
+    booking = Booking.query.get_or_404(booking_id)
+    booking.participant_status = "Allowed"
+    db.session.commit()
+    flash("Participant allowed successfully!")
+    return redirect(url_for('participant'))
+
+@app.route('/staff/participant/<int:booking_id>/deny')
+@auth_required
+def deny_participant(booking_id):
+    booking = Booking.query.get_or_404(booking_id)
+    booking.participant_status = "Denied"
+    db.session.commit()
+    flash("Participant denied!")
+    return redirect(url_for('participant'))
 
 @app.route('/user')
 @auth_required
 def user():
     user= User.query.get(session['user_id'])
-    treks= Trek.query.filter_by(status='Open').all()
+    treks= Trek.query.filter(Trek.status=='Open', Trek.available_slots>0).all()
     bookings= Booking.query.filter_by(user_id= session['user_id']).limit(3).all()
     return render_template("user/user_dashboard.html", user=user, treks=treks, bookings=bookings)
 

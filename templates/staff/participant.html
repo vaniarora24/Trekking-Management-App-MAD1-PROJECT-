@@ -4,13 +4,18 @@
 {% endblock %}
 
 {% block content %}
+<br>
+{% include 'staff/staff_navbar.html' %}
+<br>
 <h1 class="display-1">Participants</h1>
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Trek Name</th>
                 <th>Booking Date</th>
+                <th>Actions</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -19,8 +24,26 @@
             <tr>
                 <td>{{ booking.user.name }}</td>
                 <td>{{ booking.user.email }}</td>
+                <td> {{ booking.trek.trek_name }}</td>
                 <td>{{ booking.booking_date.date() }}</td>
-                <td>{{ booking.status }}</td>
+                <td>
+                    {% if booking.participant_status == "Pending" %}
+                    <a href="{{ url_for('allow_participant',
+                        booking_id=booking.booking_id) }}"
+                        class="btn btn-success">
+                        Allow
+                    </a>
+
+                    <a href="{{ url_for('deny_participant',
+                        booking_id=booking.booking_id) }}"
+                        class="btn btn-danger">
+                        Deny
+                    </a>
+                    {% else %}
+                        {{ booking.participant_status }}
+                    {% endif %}
+                </td>
+                <td>{{ booking.participant_status }}</td>
             </tr>
         {% endfor %}
         </tbody>
